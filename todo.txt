@@ -1,0 +1,7 @@
+TODO:
+
+-create code_memory
+-design compute_target
+-make memory register file
+    --->ALWAYS CLOCKED == uses block RAM
+    --->2 read ports, 1 write port
