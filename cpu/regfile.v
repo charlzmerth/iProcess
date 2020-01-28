@@ -15,7 +15,7 @@ module regfile
   output wire [31:0] r1;
   );
 
-  reg [0:WORDS-1] [31:0] data;
+  reg [WORDS-1:0] [31:0] data;
 
   always @(posedge clk) begin
     if (reset)
