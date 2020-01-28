@@ -1,31 +1,33 @@
-// A register file with variable size
-module regfile
-  #(parameter WORDS=32) (
+// A register file for 32-bit ARM CPU
+module regfile (
+  input wire clk,
+  input wire reset,
+  input wire write_en,
 
-  input wire clk;
-  input wire reset;
-  input wire write_en;
+  input wire [3:0] write_reg,
+  input wire [31:0] write_data,
 
-  input wire [31:0] w0_addr;
-  input wire [31:0] w0;
-
-  input wire [31:0] r0_addr;
-  input wire [31:0] r1_addr;
-  output wire [31:0] r0;
-  output wire [31:0] r1;
+  input wire [3:0] read_reg0,
+  input wire [3:0] read_reg1,
+  output reg [31:0] read_data0,
+  output reg [31:0] read_data1
   );
 
-  reg [WORDS-1:0] [31:0] data;
+  reg [31:0] data [0:15];
+  integer i;
 
   always @(posedge clk) begin
-    if (reset)
-	  data <= 0;
-	else begin
-	  r0 <= data[r0_addr];
-	  r1 <= data[r1_addr];
+    if (reset) begin
+  	  for (i = 0; i < 16; i++) begin
+        data[i] <= 0;
+      end
+    end
+  	else begin
+  	  read_data0 <= data[read_reg0];
+  	  read_data1 <= data[read_reg1];
 
-	  if (write_en)
-      data[w0_addr] <= w0;
+  	  if (write_en)
+        data[write_reg] <= write_data;
 	end
   end
 endmodule

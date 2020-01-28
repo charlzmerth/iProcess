@@ -37,7 +37,7 @@ module cpu(
       loaded <= 1;
     end
     else begin
-      pc <= npc;
+      pc_curr <= pc_next;
       loaded <= 0;
     end
   end
