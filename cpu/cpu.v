@@ -24,19 +24,21 @@ module cpu(
 
   reg [31:0] code_memory [0:31];
   wire [31:0] inst;
+  wire [31:0] pc_curr;
+  wire [31:0] pc_next;
   wire loaded;
 
+  update_pc u (.clk, .reset, .pc_in(pc_curr), .pc_out(pc_next));
+
   always @(posedge clk) begin
-    if (loaded == 0) begin
-      inst <= code_memory[pc];
-      pc <= pc + 4;
+    if (loaded) begin
+      inst <= code_memory[pc_curr];
+      pc_curr <= pc_curr + 4;
       loaded <= 1;
     end
     else begin
-      if (inst == branch) begin
-        pc = compute_target(pc, inst);
-        loaded <= 0;
-      end
+      pc <= npc;
+      loaded <= 0;
     end
   end
 

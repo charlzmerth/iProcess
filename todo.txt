@@ -5,3 +5,22 @@ TODO:
 -make memory register file
     --->ALWAYS CLOCKED == uses block RAM
     --->2 read ports, 1 write port
+-for PC: check for writes to PC (r15), route to PC local variable
+-localparams file for bit data, etc (https://stackoverflow.com/questions/38960947/how-to-share-constants-between-many-files-in-verilog)
+
+!!!
+on branch instruction:
+  1. sign extend
+  2. left shift two bits
+  3. pre-fetch operation causes PC to be ahead of current instruction
+    a. subtract off
+    b. carry through pipeline(?)
+    c. PC + 8 + "immediate" (it's up to the *compiler* to know that)
+
+
+Testing:
+  1. write assembly by hand
+  2. use gcc frontend to assemble
+  3. objdump to debug
+  4. initial block or readmemh() to initialize hardware
+  5. debug port
