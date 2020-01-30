@@ -24,3 +24,13 @@ Testing:
   3. objdump to debug
   4. initial block or readmemh() to initialize hardware
   5. debug port
+
+NEVER SYNTHESIZE a latch
+  - check in synthesis log
+
+PHASES: (use constants)
+  1.
+  2.
+  3.
+  4.
+  5.

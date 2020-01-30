@@ -1,16 +1,16 @@
 // A register file for 32-bit ARM CPU
 module regfile (
-  input wire clk,
-  input wire reset,
-  input wire write_en,
+    input wire clk,
+    input wire reset,
+    input wire write_en,
 
-  input wire [3:0] write_reg,
-  input wire [31:0] write_data,
+    input wire [3:0] write_reg,
+    input wire [31:0] write_data,
 
-  input wire [3:0] read_reg0,
-  input wire [3:0] read_reg1,
-  output reg [31:0] read_data0,
-  output reg [31:0] read_data1
+    input wire [3:0] read_regA,
+    input wire [3:0] read_regB,
+    output reg [31:0] read_dataA,
+    output reg [31:0] read_dataB
   );
 
   reg [31:0] data [0:15];
@@ -23,8 +23,8 @@ module regfile (
       end
     end
   	else begin
-  	  read_data0 <= data[read_reg0];
-  	  read_data1 <= data[read_reg1];
+  	  read_dataA <= data[read_regA];
+  	  read_dataB <= data[read_regB];
 
   	  if (write_en)
         data[write_reg] <= write_data;

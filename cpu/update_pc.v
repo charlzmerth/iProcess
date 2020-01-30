@@ -1,31 +1,24 @@
-// Include all global constants, such as condition codes
-`include constants.v
-
+// Calculates the next PC, factoring in branches
 module update_pc(
-  input wire clk;
-  input wire reset;
-  input wire [31:0] pc_in;
-  input wire [31:0] inst;
-
-  output wire [31:0] pc_out;
+    input wire clk, reset, branch;
+    input wire [31:0] pc_in;
+    input wire [31:0] inst;
+    output reg [31:0] pc_out;
   );
 
-  // Turns a signal into a sign-extended 32-bit signal
-  function automatic [31:0] sign_extend;
-    input [OFFSET_SIZE-1] in;
-    input reg padding;
-
-    begin
-      // Pad "in" with the MSB to make it a 32-bit signal
-      PAD_SIZE = 32 - OFFSET_SIZE;
-      sign_extend = { PAD_SIZE {in[OFFSET_SIZE-1]}, in };
-    end
-  endfunction
-
+  // Branch Specific Calculations
+  wire [23:0] offset_field;
   wire [31:0] extended_offset;
-  assign extended_offset = sign_extend(inst[])
+  assign offset_field = inst[B_OFFSET_MSB:B_OFFSET_LSB];
 
-  always (@*) begin
-	// Test for B-Type instruction
-    if (inst[31:21] >= 3'h0A0 && inst[31:21] <= 3'h0BF) begin
-	  assign pc_out = pc_in + 4 * inst[20:0]
+  sign_extend #(.IN(24), .OUT(32)) s (.in_wire(offset_field),
+   .out_wire(extended_offset));
+
+  // Calculate the next PC based on branch condition
+  always @ (*) begin
+    if (branch)
+      pc_out <= pc_in + PC_INCR + (extended_offset << B_OFFSET_SHIFT);
+    else
+      pc_out <= pc_in + PC_INCR;
+  end
+endmodule
