@@ -1,5 +1,5 @@
 // Include all global constants, such as condition codes
-`include constants.v
+`include arm_constants.v
 
 module cpu(
     input wire clk,
@@ -14,28 +14,31 @@ module cpu(
     output wire [7:0] debug_port7
   );
 
-  wire loaded, branch;
   wire [31:0] inst;
-  wire [4:0] regA, regB;
-  wire [31:0] regA_data, regB_data;
+  wire [3:0] read_regA, read_regB;
+  wire [31:0] data_regA, data_regB;
   reg [31:0] pc_curr, pc_next;
   reg [31:0] code_memory [0:`CODE_MEM_SIZE-1];
-  reg N_flag, Z_flag, C_flag, V_flag;
+  // reg N_flag, Z_flag, C_flag, V_flag;
 
-  assign branch = inst[`CODE_MSB:`CODE_LSB] = `BRANCH_CODE;
+  code_mem #(.SIZE=`CODE_MEM_SIZE) c (.clk, .addr(pc_curr), .inst);
+
+  decode_inst d (.inst, .read_regA, .read_regB,
+    .write_reg, .write_en);
 
   update_pc u (.clk, .reset, .branch,
-               .pc_in(pc_curr), .pc_out(pc_next));
+    .pc_in(pc_curr), .pc_out(pc_next));
 
-  regfile r (.clk, .reset, .write_en(0'b0),
-             .write_reg(4'b0), .write_data(32'b0),
-             .read_regA(regA), .read_dataA(regA_data),
-             .read_regB(regB), .read_dataB(regB_data));
+  regfile r (.clk, .reset, .write_en,
+    .write_reg, .write_data(32'b0),
+    .read_regA, .data_regA, .read_regB, .data_regB);
 
   /*
   1. inst = code_memory[pc]
   2. pc = pc + 4
+
   ----clock cycle boundary
+
   3. if (inst == branch)
   4.     pc = compute_target(pc, inst)
 
@@ -45,15 +48,10 @@ module cpu(
 
   // Instruction fetch and update
   always @(posedge clk) begin
-    if (~loaded) begin
-      inst <= code_memory[pc_curr];
-      loaded <= 1;
-    end
-    else begin
+    if (nreset)
+      pc_curr <= 0;
+    else
       pc_curr <= pc_next;
-      loaded <= 0;
-      // =========== reassign registers ============
-    end
   end
 
 /*

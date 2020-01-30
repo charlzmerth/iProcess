@@ -23,6 +23,24 @@
 `define COND_AL 4'b1110
 `define COND_NV 4'b1111
 
+// Arithmetic Logic Unit Constants (opcodes)
+`define AND 4'b0000
+`define EOR 4'b0001
+`define SUB 4'b0010
+`define RSB 4'b0011
+`define ADD 4'b0100
+`define ADC 4'b0101
+`define SBC 4'b0110
+`define RSC 4'b0111
+`define TST 4'b1000
+`define TEQ 4'b1001
+`define CMP 4'b1010
+`define CMN 4'b1011
+`define ORR 4'b1110
+`define MOV 4'b1101
+`define BIC 4'b1110
+`define MVN 4'b1111
+
 // Global Instruction Constants
 `define PC_INCR 4
 `define COND_MSB 31
@@ -37,22 +55,22 @@
 `define RM_LSB 0
 
 // Branch Instruction Bits
-`define BRANCH_CODE 3'b101
+`define B_CODE 3'b101
 `define B_LINK_BIT 24
 `define B_OFFSET_MSB 23
 `define B_OFFSET_LSB 0
 `define B_OFFSET_SHIFT 2
 
 // Data Processing Instruction Bits
-`define DATA_CODE 3'b000
-// ========= SHIFT BITS HERE ========= //
+`define D_CODE 3'000
 
 // Load/Store Immediate Instruction Bits
 `define LS_IMM_CODE 3'b010
+`define LS_IMM_LOAD_BIT 20
 `define LS_IMM_OFFSET_MSB 11
 `define LS_IMM_OFFSET_LSB 0
 
 // Load/Store Register Instruction Bits
-`define LS_REG_CODE 3'b011;
+`define L_CODE 3'b011;
 
 `endif

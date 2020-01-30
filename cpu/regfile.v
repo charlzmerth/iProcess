@@ -9,8 +9,8 @@ module regfile (
 
     input wire [3:0] read_regA,
     input wire [3:0] read_regB,
-    output reg [31:0] read_dataA,
-    output reg [31:0] read_dataB
+    output reg [31:0] data_regA,
+    output reg [31:0] data_regB
   );
 
   reg [31:0] data [0:15];
@@ -23,11 +23,11 @@ module regfile (
       end
     end
   	else begin
-  	  read_dataA <= data[read_regA];
-  	  read_dataB <= data[read_regB];
+  	  data_regA <= data[read_regA];
+  	  data_regB <= data[read_regB];
 
   	  if (write_en)
         data[write_reg] <= write_data;
-	end
+	  end
   end
 endmodule
