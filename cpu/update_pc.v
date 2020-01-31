@@ -1,6 +1,6 @@
 // Calculates the next PC, factoring in branches
 module update_pc(
-    input wire branch;
+    input wire branch, cond_execute;
     input wire [31:0] pc_in;
     input wire [31:0] inst;
     output reg [31:0] pc_out;
@@ -16,9 +16,9 @@ module update_pc(
 
   // Calculate the next PC based on branch condition
   always @ (*) begin
-    if (branch)
-      pc_out <= pc_in + `PC_INCR + (extended_offset << `B_OFFSET_SHIFT);
+    if (branch && cond_execute)
+      pc_out = pc_in + `PC_INCR + (extended_offset << `B_OFFSET_SHIFT);
     else
-      pc_out <= pc_in + `PC_INCR;
+      pc_out = pc_in + `PC_INCR;
   end
 endmodule
