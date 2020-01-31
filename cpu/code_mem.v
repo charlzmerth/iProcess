@@ -1,4 +1,4 @@
-`define BENCHMARK "../../iProcess/testcode/code.hex"
+`define BENCHMARK "../testcode/code.hex"
 
 // Code memory for 32-bit CPU, where SIZE is # of bytes
 module code_mem #(parameter SIZE=1024) (

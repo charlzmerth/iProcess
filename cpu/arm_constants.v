@@ -18,7 +18,7 @@
 `define COND_LS 4'b1001
 `define COND_GE 4'b1010
 `define COND_LT 4'b1011
-`define COND_GT 4'b1110
+`define COND_GT 4'b1100
 `define COND_LE 4'b1101
 `define COND_AL 4'b1110
 `define COND_NV 4'b1111
@@ -47,6 +47,8 @@
 `define COND_LSB 28
 `define CODE_MSB 27
 `define CODE_LSB 25
+`define OP_MSB 24
+`define OP_LSB 21
 `define RN_MSB 19
 `define RN_LSB 16
 `define RD_MSB 15
@@ -62,7 +64,7 @@
 `define B_OFFSET_SHIFT 2
 
 // Data Processing Instruction Bits
-`define D_CODE 3'000
+`define D_CODE 3'b000
 
 // Load/Store Immediate Instruction Bits
 `define LS_IMM_CODE 3'b010
@@ -71,6 +73,6 @@
 `define LS_IMM_OFFSET_LSB 0
 
 // Load/Store Register Instruction Bits
-`define L_CODE 3'b011;
+`define L_CODE 3'b011
 
 `endif

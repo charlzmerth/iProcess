@@ -5,8 +5,8 @@ module cpu_tb();
 
 
   // Input
-  wire clk;
-  wire nreset;
+  reg clk;
+  reg reset;
 
   // Output
   wire led;
@@ -17,11 +17,10 @@ module cpu_tb();
   wire [7:0] debug_port5;
   wire [7:0] debug_port6;
   wire [7:0] debug_port7;
+  integer i;
 
-  wire[31:0] inst;
-  assign inst = {debug_port1, debug_port2, debug_port3, debug_port4}
 
-  cpu dut (.clk, .nreset, .led, .debug_port1, .debug_port2, .debug_port3, .debug_port4, .debug_port5, .debug_port6, .debug_port7);
+  cpu dut (.clk, .reset, .led, .debug_port1, .debug_port2, .debug_port3, .debug_port4, .debug_port5, .debug_port6, .debug_port7);
 
   initial begin // Set up the clock
     clk <= 0;
@@ -30,10 +29,10 @@ module cpu_tb();
 
   initial begin
   						                        @(posedge clk);
-		nreset = 0			               		@(posedge clk);
-    nreset = 1			               		@(posedge clk);
-    nreset = 0			               		@(posedge clk);
-    					                        @(posedge clk);
+		reset <= 0;			               		@(posedge clk);
+    reset <= 1;			               		@(posedge clk);
+              			               		@(posedge clk);
+    reset <= 0;					              @(posedge clk);
 
     for (i=0; i <= 100; i = i + 1) begin
 //    	  $display("%b",debug_port1);
@@ -44,6 +43,8 @@ module cpu_tb();
 //        $display("%b",debug_port6);
 //        $display("%b",debug_port7);
         @(posedge clk);
+      end
+      $stop;
     end
 
 

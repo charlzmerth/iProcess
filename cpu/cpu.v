@@ -1,9 +1,9 @@
 // Include all global constants, such as condition codes
-`include arm_constants.v
+`include "arm_constants.v"
 
 module cpu(
     input wire clk,
-    input wire nreset,
+    input wire reset,
     output wire led,
     output wire [7:0] debug_port1,
     output wire [7:0] debug_port2,
@@ -15,19 +15,27 @@ module cpu(
   );
 
   wire [31:0] inst;
-  wire [3:0] read_regA, read_regB;
-  wire [31:0] data_regA, data_regB;
-  reg [31:0] pc_curr, pc_next;
-  reg [31:0] code_memory [0:`CODE_MEM_SIZE-1];
+  wire [3:0] read_regA, read_regB, write_reg;
+  wire [31:0] data_regA, data_regB , pc_next;
+  reg [31:0] pc_curr;
+  wire branch_inst, data_inst, load_inst, write_en, cond_execute;
   // reg N_flag, Z_flag, C_flag, V_flag;
 
-  code_mem #(.SIZE=`CODE_MEM_SIZE) c (.clk, .addr(pc_curr), .inst);
+  code_mem #(.SIZE(`CODE_MEM_SIZE)) c (.addr(pc_curr), .inst);
 
   decode_inst d (.inst, .read_regA, .read_regB,
-    .write_reg, .write_en);
+    .write_reg, .write_en, .branch_inst, .data_inst, .load_inst, .cond_execute);
 
-  update_pc u (.clk, .reset, .branch,
-    .pc_in(pc_curr), .pc_out(pc_next));
+    always @(posedge clk) begin
+      $display("Instruction: %b", inst);
+      $display("Next PC: %b Offset: %b ", pc_next, u.extended_offset);
+      if(branch_inst) $display("PC: %h %s B", pc_curr, d.condition);
+      else if(data_inst) $display("PC: %h %s %s" , pc_curr, d.condition, d.opcode);
+      else if(load_inst)$display("PC: %h %s LDR" , pc_curr, d.condition);
+      else $display("PC: %h %s Unknown", pc_curr, d.condition);
+    end
+
+  update_pc u (.inst, .branch_inst, .pc_in(pc_curr), .pc_out(pc_next), .cond_execute);
 
   regfile r (.clk, .reset, .write_en,
     .write_reg, .write_data(32'b0),
@@ -48,37 +56,11 @@ module cpu(
 
   // Instruction fetch and update
   always @(posedge clk) begin
-    if (nreset)
+    if (reset)
       pc_curr <= 0;
     else
       pc_curr <= pc_next;
   end
-
-/*
-  // Test conditional execution
-  reg cond_execute;
-  always @(*) begin
-    case (inst[`COND_MSB:`COND_LSB])
-      `COND_EQ: cond_execute <=  Z_flag;
-      `COND_NE: cond_execute <= ~Z_flag;
-      `COND_CS: cond_execute <=  C_flag;
-      `COND_CC: cond_execute <= ~C_flag;
-      `COND_MI: cond_execute <=  N_flag;
-      `COND_PL: cond_execute <= ~N_flag;
-      `COND_VS: cond_execute <=  V_flag;
-      `COND_VC: cond_execute <= ~V_flag;
-      `COND_HI: cond_execute <=  C_flag && ~Z_flag;
-      `COND_LS: cond_execute <= ~C_flag || Z_flag;
-      `COND_GE: cond_execute <=  N_flag == V_flag;
-      `COND_LT: cond_execute <=  N_flag != V_flag;
-      `COND_GT: cond_execute <= (Z_flag == 0) && (N_flag == V_flag);
-      `COND_LE: cond_execute <= (Z_flag == 0) && (N_flag != V_flag);
-      `COND_AL: cond_execute <=  1'b1;
-      `COND_NV: cond_execute <=  1'bx;
-       default: cond_execute <=  1'bx;
-    endcase
-  end
-*/
 
   // Controls the LED on the board
   assign led = 1'b1;
