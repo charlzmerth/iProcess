@@ -2,8 +2,6 @@
 `timescale 1ns/10ps
 
 module cpu_tb();
-
-
   // Input
   reg clk;
   reg reset;
@@ -29,23 +27,22 @@ module cpu_tb();
 
   initial begin
   						                        @(posedge clk);
-		reset <= 0;			               		@(posedge clk);
+	 reset <= 0;			               		@(posedge clk);
     reset <= 1;			               		@(posedge clk);
               			               		@(posedge clk);
     reset <= 0;					              @(posedge clk);
 
     for (i=0; i <= 50; i = i + 1) begin
-//    	  $display("%b",debug_port1);
-//        $display("%b",debug_port2);
-//        $display("%b",debug_port3);
-//        $display("%b",debug_port4);
-//        $display("%b",debug_port5);
-//        $display("%b",debug_port6);
-//        $display("%b",debug_port7);
-        @(posedge clk);
+   	 $display("%b",debug_port1);
+       $display("%b",debug_port2);
+       $display("%b",debug_port3);
+       $display("%b",debug_port4);
+       $display("%b",debug_port5);
+       $display("%b",debug_port6);
+       $display("%b",debug_port7);
+       @(posedge clk);
       end
       $stop;
     end
-
 
 endmodule
