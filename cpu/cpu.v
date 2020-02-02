@@ -16,7 +16,7 @@ module cpu(
 
   wire [31:0] inst;
   wire [3:0] read_regA, read_regB, write_reg;
-  wire [31:0] data_regA, data_regB , pc_next;
+  wire [31:0] data_regA, data_regB, pc_next;
   reg [31:0] pc_curr;
   wire branch_inst, data_inst, load_inst, write_en, cond_execute;
   // reg N_flag, Z_flag, C_flag, V_flag;
@@ -28,11 +28,13 @@ module cpu(
 
     always @(posedge clk) begin
       $display("Instruction: %b", inst);
-      $display("Next PC: %b Offset: %b ", pc_next, u.extended_offset);
+      $display("RegA: %d RegB: %d WReg: %d", read_regA, read_regB, write_reg);
+//      $display("Next PC: %b Offset: %b ", pc_next, u.extended_offset);
       if(branch_inst) $display("PC: %h %s B", pc_curr, d.condition);
       else if(data_inst) $display("PC: %h %s %s" , pc_curr, d.condition, d.opcode);
       else if(load_inst)$display("PC: %h %s LDR" , pc_curr, d.condition);
       else $display("PC: %h %s Unknown", pc_curr, d.condition);
+      $display("   ");
     end
 
   update_pc u (.inst, .branch_inst, .pc_in(pc_curr), .pc_out(pc_next), .cond_execute);

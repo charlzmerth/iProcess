@@ -34,7 +34,7 @@ module cpu_tb();
               			               		@(posedge clk);
     reset <= 0;					              @(posedge clk);
 
-    for (i=0; i <= 100; i = i + 1) begin
+    for (i=0; i <= 50; i = i + 1) begin
 //    	  $display("%b",debug_port1);
 //        $display("%b",debug_port2);
 //        $display("%b",debug_port3);
