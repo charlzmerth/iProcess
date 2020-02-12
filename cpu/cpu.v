@@ -44,17 +44,6 @@ module cpu(
   // Controls the LED on the board
   assign led = 1'b1;
 
-  always @(posedge clk) begin
-     $display("Instruction: %b", inst);
-     $display("RegA: %d RegB: %d WReg: %d", read_regA, read_regB, write_reg);
-     //      $display("Next PC: %b Offset: %b ", pc_next, u.extended_offset);
-     if(branch_inst) $display("PC: %h %s B", pc_curr, d.condition);
-     else if(data_inst) $display("PC: %h %s %s" , pc_curr, d.condition, d.opcode);
-     else if(load_inst)$display("PC: %h %s LDR" , pc_curr, d.condition);
-     else $display("PC: %h %s Unknown", pc_curr, d.condition);
-     $display("   ");
-  end
-  
   // These are how you communicate back to the serial port debugger
   assign debug_port1 = pc_curr[7:0];
   assign debug_port2 = 0;
