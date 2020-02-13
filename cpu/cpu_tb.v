@@ -5,7 +5,7 @@
 module cpu_tb();
   // Input
   reg clk;
-  reg reset;
+  reg resetn;
 
   // Output
   wire led;
@@ -19,7 +19,7 @@ module cpu_tb();
   integer i;
 
 
-  cpu dut (.clk, .reset, .led, .debug_port1, .debug_port2, .debug_port3, .debug_port4, .debug_port5, .debug_port6, .debug_port7);
+  cpu dut (.clk, .resetn, .led, .debug_port1, .debug_port2, .debug_port3, .debug_port4, .debug_port5, .debug_port6, .debug_port7);
 
   reg[15:0] condition;
   reg[23:0] opcode;
@@ -73,12 +73,15 @@ always @(*) begin
   always @(posedge clk) begin
      $display("Instruction: %b", dut.inst);
      $display("RegA: %d RegB: %d WReg: %d", dut.read_regA, dut.read_regB, dut.write_reg);
-     //      $display("Next PC: %b Offset: %b ", pc_next, u.extended_offset);
+           $display("Next PC: %h Offset: %h ", dut.pc_next, dut.u.extended_offset);
      if(dut.branch_inst) $display("PC: %h %s B", dut.pc_curr, condition);
      else if(dut.data_inst) $display("PC: %h %s %s" , dut.pc_curr, condition, opcode);
      else if(dut.load_inst)$display("PC: %h %s LDR" , dut.pc_curr, condition);
      else $display("PC: %h %s Unknown", dut.pc_curr, condition);
-     $display("   ");
+     $display("scaled_addr: %b addr: %b inst: %b", dut.c.scaled_addr, dut.c.addr, dut.c.inst);
+     $display("branch_inst: %b", dut.branch_inst);
+     $display("conditional_execute: %b", dut.cond_execute);
+     $display("");
   end
 
   initial begin // Set up the clock
@@ -87,11 +90,10 @@ always @(*) begin
   end
 
   initial begin
-  						                        @(posedge clk);
-	 reset <= 0;			               		@(posedge clk);
-    reset <= 1;			               		@(posedge clk);
-              			               		@(posedge clk);
-    reset <= 0;					              @(posedge clk);
+  						                          @(posedge clk);
+ 	  resetn <= 1;			               		@(posedge clk);
+    resetn <= 0;			               		@(posedge clk);
+    resetn <= 1;					              @(posedge clk);
 
     for (i=0; i <= 50; i = i + 1) begin
 

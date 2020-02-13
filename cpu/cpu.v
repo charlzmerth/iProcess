@@ -3,7 +3,7 @@
 
 module cpu(
     input wire clk,
-    input wire reset,
+    input wire resetn,
     output wire led,
     output wire [7:0] debug_port1,
     output wire [7:0] debug_port2,
@@ -14,6 +14,7 @@ module cpu(
     output wire [7:0] debug_port7
   );
 
+  wire reset;
   wire [31:0] inst;
   wire [3:0] read_regA, read_regB, write_reg;
   wire [31:0] data_regA, data_regB, pc_next;
@@ -21,17 +22,19 @@ module cpu(
   wire branch_inst, data_inst, load_inst, write_en, cond_execute;
   // reg N_flag, Z_flag, C_flag, V_flag;
 
-  code_mem #(.SIZE(`CODE_MEM_SIZE)) c (.addr(pc_curr), .inst);
+  assign reset = !resetn;
 
-  decode_inst d (.inst, .read_regA, .read_regB,
-    .write_reg, .write_en, .branch_inst, .data_inst, .load_inst, .cond_execute);
+  code_mem #(.SIZE(`CODE_MEM_SIZE)) c (.clk(clk), .reset(reset), .addr(pc_next), .inst(inst));
+
+  decode_inst d (.inst(inst), .read_regA(read_regA), .read_regB(read_regB), .write_reg(write_reg),
+   .write_en(write_en), .branch_inst(branch_inst), .data_inst(data_inst), .load_inst(load_inst), .cond_execute(cond_execute));
 
 
-  update_pc u (.inst, .branch_inst, .pc_in(pc_curr), .pc_out(pc_next), .cond_execute);
+  update_pc u (.inst(inst), .branch_inst(branch_inst), .pc_in(pc_curr), .pc_out(pc_next), .cond_execute(cond_execute));
 
-  regfile r (.clk, .reset, .write_en,
-    .write_reg, .write_data(32'b0),
-    .read_regA, .data_regA, .read_regB, .data_regB);
+  regfile r (.clk(clk), .reset(reset), .write_en(write_en),
+    .write_reg(write_reg), .write_data(32'b0),
+    .read_regA(read_regA), .data_regA(data_regA), .read_regB(read_regB), .data_regB(data_regB));
 
   // Instruction fetch and update
   always @(posedge clk) begin

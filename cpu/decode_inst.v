@@ -12,6 +12,8 @@ module decode_inst (
     read_regB = inst[`RN_MSB:`RN_LSB];
     write_reg = inst[`RD_MSB:`RD_LSB];
 
+    cond_execute = 1;
+
     case (inst[`CODE_MSB:`CODE_LSB])
       // Branch instruction
       `B_CODE: begin
@@ -37,9 +39,10 @@ module decode_inst (
                 write_en = 1;
               end
 
-      default: {branch_inst, data_inst, load_inst} <= 'x;
+      default: {branch_inst, data_inst, load_inst} <= 32'bx;
     endcase
   end
+
 
   //   reg[15:0] condition;
   //   reg[23:0] opcode;
