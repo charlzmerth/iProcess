@@ -7,11 +7,11 @@
 `define DATA_MEM_SIZE 4096
 
 // Pipeline Stages
-`define ST_IF 0
-`define ST_ID 1
-`define ST_EX 2
-`define ST_WB 3
-`define ST_ME 4
+`define STATE_FTCH 0
+`define STATE_DECD 1
+`define STATE_EXEC 2
+`define STATE_WRBK 3
+`define STATE_MEMW 4
 
 // Condition Codes
 `define COND_EQ 4'b0000
