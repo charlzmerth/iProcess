@@ -2,51 +2,58 @@
 
 module alu (
     input wire [31:0] inst,
-    input wire [31:0] inA, inB, reg_shift_value,
-    output wire [31:0] out,
+    input wire [31:0] regA, regB,
+    output reg [31:0] out,
     output wire update_CPSR,
     output reg N_flag, Z_flag, C_flag, V_flag
   );
 
-  wire shifter_carry;
+  wire reg_shift;
+  assign reg_shift = inst[`SHIFT_IMM_BIT];
+
+  // Calculate opcode
   wire [2:0] opcode;
   assign opcode = inst[`OP_MSB:`OP_LSB];
 
+  // Update CPSR based on instruction bits
   assign update_CPSR = (opcode == `TST) || (opcode == `TEQ) ||
                        (opcode == `CMP) || (opcode == `CMN) ||
                        inst[`S_UPDATE_BIT];
 
-  shifter s (.inst(inst), .reg_shift_value(reg_shift_value),
-             .result(out), .shifter_carry(shifter_carry));
+  // Instantiate shifter
+  wire shifter_carry;
+  wire [31:0] shifter_out;
+  shifter s (.inst(inst), .reg_shift_value(regB),
+             .result(shifter_out), .carry(shifter_carry));
 
+  // Calculate CPSR values
   always @(*) begin
     N_flag = out[31];
-    Z_flag = out == 0;
+    Z_flag = (out == 0);
     C_flag = 0;
-    V_flag = (inA[31] ^ inB[31]) == out[31];
+    V_flag = (regA[31] ^ shifter_out[31]) == out[31];
   end
 
-  reg [31:0] out_temp;
-  // Test opcode field
+  // Perform designated arithmetic operation
   always @(*) begin
     case (opcode)
-      `AND: begin out_temp = inA & inB; end
-      `EOR: begin out_temp = inA ^ inB; end
-      `SUB: begin out_temp = inA - inB; end
-      `RSB: begin out_temp = inB - inA; end
-      `ADD: begin out_temp = inA + inB; end
-      `ADC: begin out_temp = inA + inB + C_flag; end
-      `SBC: begin out_temp = inA - inB - (~C_flag); end
-      `RSC: begin out_temp = inB - inA - (~C_flag); end
-      `TST: begin out_temp = 32'bx; end
-      `TEQ: begin out_temp = 32'bx; end
-      `CMP: begin out_temp = 32'bx; end
-      `CMN: begin out_temp = 32'bx; end
-      `ORR: begin out_temp = inA | inB; end
-      `MOV: begin out_temp = inA; end
-      `BIC: begin out_temp = inA & (~inB); end
-      `MVN: begin out_temp = ~(inA); end
-       default: begin out_temp = 32'bx; end
+      `AND: begin out = regA & shifter_out; end
+      `EOR: begin out = regA ^ shifter_out; end
+      `SUB: begin out = regA + (~shifter_out + 1); end
+      `RSB: begin out = shifter_out + (~regA + 1); end
+      `ADD: begin out = regA + shifter_out; end
+      `ADC: begin out = regA + shifter_out + C_flag; end
+      `SBC: begin out = regA + (~shifter_out + 1) + (~{31'b0,~C_flag} + 1); end
+      `RSC: begin out = shifter_out + (~regA + 1) + (~{31'b0,~C_flag} + 1); end
+      `TST: begin out = regA & shifter_out; end
+      `TEQ: begin out = regA ^ shifter_out; end
+      `CMP: begin out = regA + (~shifter_out + 1); end
+      `CMN: begin out = regA + shifter_out; end
+      `ORR: begin out = regA | shifter_out; end
+      `MOV: begin out = regA; end
+      `BIC: begin out = regA & (~shifter_out); end
+      `MVN: begin out = ~(regA); end
+       default: begin out = 32'bx; end
     endcase
   end
 endmodule
@@ -54,8 +61,10 @@ endmodule
 module shifter (
   	input wire [31:0]	inst, reg_shift_value,
   	output reg [31:0] result,
-    output reg shifter_carry
+    output wire carry
 	);
+
+  assign carry = x;
 
   wire reg_shift;
   wire [1:0] reg_shift_code;
