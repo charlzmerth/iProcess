@@ -3,7 +3,15 @@
 `define _arm_constants
 
 // Design Constants
-`define CODE_MEM_SIZE 128
+`define CODE_MEM_SIZE 1024
+`define DATA_MEM_SIZE 4096
+
+// Pipeline Stages
+`define ST_IF 0
+`define ST_ID 1
+`define ST_EX 2
+`define ST_WB 3
+`define ST_ME 4
 
 // Condition Codes
 `define COND_EQ 4'b0000
@@ -22,24 +30,6 @@
 `define COND_LE 4'b1101
 `define COND_AL 4'b1110
 `define COND_NV 4'b1111
-
-// Arithmetic Logic Unit Constants (opcodes)
-`define AND 4'b0000
-`define EOR 4'b0001
-`define SUB 4'b0010
-`define RSB 4'b0011
-`define ADD 4'b0100
-`define ADC 4'b0101
-`define SBC 4'b0110
-`define RSC 4'b0111
-`define TST 4'b1000
-`define TEQ 4'b1001
-`define CMP 4'b1010
-`define CMN 4'b1011
-`define ORR 4'b1110
-`define MOV 4'b1101
-`define BIC 4'b1110
-`define MVN 4'b1111
 
 // Global Instruction Constants
 `define PC_INCR 4
@@ -64,7 +54,47 @@
 `define B_OFFSET_SHIFT 2
 
 // Data Processing Instruction Bits
+`define S_UPDATE_BIT 20
 `define D_CODE 3'b000
+`define D_REG_CODE 3'b000
+`define D_IMM_CODE 3'b001
+
+// Shifting Instruction Bits
+`define REG_SHIFT_IMM_MSB 11
+`define REG_SHIFT_IMM_LSB 7
+`define REG_SHIFT_CODE_MSB 6
+`define REG_SHIFT_CODE_LSB 5
+`define REG_SHIFT_REG_MSB 3
+`define REG_SHIFT_REG_LSB 0
+
+`define REG_SHIFT_CODE_LSR 0'b00
+`define REG_SHIFT_CODE_LSL 0'b01
+`define REG_SHIFT_CODE_ASR 0'b10
+`define REG_SHIFT_CODE_RTR 0'b11
+
+`define SHIFT_IMM_BIT 25
+`define IMM_SHIFT_ROT_MSB 11
+`define IMM_SHIFT_ROT_LSB 8
+`define IMM_SHIFT_VAL_MSB 7
+`define IMM_SHIFT_VAL_LSB 0
+
+// Arithmetic Logic Unit Constants (opcodes)
+`define AND 4'b0000
+`define EOR 4'b0001
+`define SUB 4'b0010
+`define RSB 4'b0011
+`define ADD 4'b0100
+`define ADC 4'b0101
+`define SBC 4'b0110
+`define RSC 4'b0111
+`define TST 4'b1000
+`define TEQ 4'b1001
+`define CMP 4'b1010
+`define CMN 4'b1011
+`define ORR 4'b1110
+`define MOV 4'b1101
+`define BIC 4'b1110
+`define MVN 4'b1111
 
 // Load/Store Immediate Instruction Bits
 `define LS_IMM_CODE 3'b010
