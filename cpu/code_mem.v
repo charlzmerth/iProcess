@@ -1,4 +1,4 @@
-`define BENCHMARK "C:\\Users\\Anabel\\Documents\\EE 469\\EE 469 Lab\\iProcess\\cpu\\code.hex"
+`define BENCHMARK "./code.hex"
 
 // Code memory for 32-bit CPU, where SIZE is # of bytes
 module code_mem #(parameter SIZE=1024) (
