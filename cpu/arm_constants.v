@@ -10,8 +10,8 @@
 `define STATE_FTCH 0
 `define STATE_DECD 1
 `define STATE_EXEC 2
-`define STATE_WRBK 3
-`define STATE_MEMW 4
+`define STATE_MEMW 3
+`define STATE_WRBK 4
 
 // Condition Codes
 `define COND_EQ 4'b0000

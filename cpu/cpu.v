@@ -59,9 +59,13 @@ module cpu(
 
   // ==========INSTRUCTION STAGE REGISTERS==========
 
+  reg [2:0] cycle_stage;
   reg [31:0] ftch_inst, decd_inst, exec_inst, wrbk_inst, memw_inst;
   always @(posedge clk) begin
-    ftch_inst <= code_mem_data;
+	if (cycle_stage == `STAGE_FTCH)
+		ftch_inst <= code_mem_data;
+		
+	cycle_stage <= (cycle_stage + 1) % 5;
 
     if (reset) begin
       decd_inst <= 32'bx;
@@ -72,15 +76,15 @@ module cpu(
     else begin
       decd_inst <= ftch_inst;
       exec_inst <= decd_inst;
-      wrbk_inst <= exec_inst;
-      memw_inst <= wrbk_inst;
+      memw_inst <= exec_inst;
+      wrbk_inst <= memw_inst;
     end
   end
 
 
   // =============MODULE DECLARATIONS==================
 
-  wire branch_inst, data_inst, load_inst, write_en, cond_execute;
+  wire branch_inst, data_inst, load_inst, store_inst, write_en, cond_execute;
   update_pc u (.inst(inst), .branch_inst(branch_inst), .pc_in(pc_curr),
   .pc_out(pc_next), .cond_execute(cond_execute));
 
@@ -92,13 +96,13 @@ module cpu(
 
   wire [3:0] read_regA, read_regB, write_reg;
   decode_inst d (.inst(inst), .read_regA(read_regA), .read_regB(read_regB),
-      .write_reg(write_reg), .write_en(write_en), .branch_inst(branch_inst),
-      .data_inst(data_inst), .load_inst(load_inst), .cond_execute(cond_execute));
+      .write_reg(write_reg), .write_en(write_en), .cond_execute(cond_execute),
+	  .branch_inst(branch_inst), .data_inst(data_inst), .load_inst(load_inst), .store_inst(store_inst));
 
 
   wire [31:0] alu_output;
   wire [31:0] data_regA, data_regB;
-  regfile r (.clk(clk), .reset(reset), .write_en(write_en),
+  regfile r (.clk(clk), .reset(reset), .write_en(write_en && cycle_stage == `STAGE_WRBK),
   .write_reg(write_reg), .write_data(alu_output), .read_regA(read_regA),
   .data_regA(data_regA), .read_regB(read_regB), .data_regB(data_regB));
 
@@ -110,7 +114,7 @@ module cpu(
 
 
   wire [31:0] read_mem_addr, write_mem_addr, read_mem_data, write_mem_data;
-  data_mem #(.SIZE(`DATA_MEM_SIZE)) dm (.clk(clk), .reset(reset), .write_en(0),
+  data_mem #(.SIZE(`DATA_MEM_SIZE)) dm (.clk(clk), .reset(reset), .write_en(store_inst && cycle_stage == `STAGE_MEMW),
       .write_addr(write_mem_addr), .write_data(write_mem_data),
       .read_addrA(read_mem_addr), .read_dataA(write_mem_data));
 
