@@ -1,22 +1,6 @@
 TODO:
 
--create code_memory
--design compute_target
--make memory register file
-    --->ALWAYS CLOCKED == uses block RAM
-    --->2 read ports, 1 write port
 -for PC: check for writes to PC (r15), route to PC local variable
--localparams file for bit data, etc (https://stackoverflow.com/questions/38960947/how-to-share-constants-between-many-files-in-verilog)
-
-!!!
-on branch instruction:
-  1. sign extend
-  2. left shift two bits
-  3. pre-fetch operation causes PC to be ahead of current instruction
-    a. subtract off
-    b. carry through pipeline(?)
-    c. PC + 8 + "immediate" (it's up to the *compiler* to know that)
-
 
 Testing:
   1. write assembly by hand
@@ -28,9 +12,8 @@ Testing:
 NEVER SYNTHESIZE a latch
   - check in synthesis log
 
-PHASES: (use constants)
-  1.
-  2.
-  3.
-  4.
-  5.
+Implement Load/Store Instructions
+  - pre/post base register indexing?
+  - how to test?
+
+Fix/Debug ALU (especially conditions codes)

@@ -26,7 +26,7 @@ module cpu_tb();
 
   // Test conditional execution
   always @(*) begin
-    case (dut.inst[`COND_MSB:`COND_LSB])
+    case (dut.decd_inst[`COND_MSB:`COND_LSB])
       `COND_EQ: begin condition = "EQ"; end // cond_execute =  Z_flag; end
       `COND_NE: begin condition = "NE"; end // cond_execute = ~Z_flag; end
       `COND_CS: begin condition = "CS"; end // cond_execute =  C_flag; end
@@ -49,7 +49,7 @@ module cpu_tb();
 
   // Test opcode field
 always @(*) begin
-  case (dut.inst[`OP_MSB:`OP_LSB])
+  case (dut.decd_inst[`OP_MSB:`OP_LSB])
     `AND: begin opcode = "AND"; end
     `EOR: begin opcode = "EOR"; end
     `SUB: begin opcode = "SUB"; end
@@ -71,16 +71,76 @@ always @(*) begin
   end
 
   always @(posedge clk) begin
-     $display("Instruction: %b", dut.inst);
-     $display("RegA: %d RegB: %d WReg: %d", dut.read_regA, dut.read_regB, dut.write_reg);
-           $display("Next PC: %h Offset: %h ", dut.pc_next, dut.u.extended_offset);
-     if(dut.branch_inst) $display("PC: %h %s B", dut.pc_curr, condition);
-     else if(dut.data_inst) $display("PC: %h %s %s" , dut.pc_curr, condition, opcode);
-     else if(dut.load_inst)$display("PC: %h %s LDR" , dut.pc_curr, condition);
-     else $display("PC: %h %s Unknown", dut.pc_curr, condition);
-     $display("scaled_addr: %b addr: %b inst: %b", dut.c.scaled_addr, dut.c.addr, dut.c.inst);
+     if (dut.cycle_state == `STATE_FTCH) begin
+      $display("");
+      $display("==========================================================================");
+      $display("");
+    end
+
+     // Display instruction information
+     $display("Cycle State: %d", dut.cycle_state);
+     $display("");
+
+     $display("Fetch Instruction:     %h", dut.ftch_inst);
+     $display("Decode Instruction:    %h", dut.decd_inst);
+     $display("Execute Instruction:   %h", dut.exec_inst);
+     $display("Memory Instruction:    %h", dut.memw_inst);
+     $display("Writeback Instruction: %h", dut.wrbk_inst);
+     $display("");
+
+     $display("reg_write_value: %d reg_writeback: %b write_en: %d", dut.reg_write_value, dut.reg_writeback, dut.reg_write_en);
+     $display("RegA: %d | RegB: %d | WReg: %d", dut.read_regA, dut.read_regB, dut.write_reg);
+     $display("RegA data: %d RegB data: %d", dut.data_regA, dut.data_regB);
+     $display("");
+
+     $display("Memory Access: %d", dut.mem_access_addr);
+     $display("Memory Write Data: %d", dut.data_regB);
+     $display("Memory Read Data: %d", dut.read_mem_data);
+     //$display("offset: %d | add_not_sub: %b", dut.ls_imm_offset, dut.add_not_sub);
+     $display("");
+
+     if (dut.reg_write_en)
+      $display("***************WRITING TO REGISERS***************");
+
+     if (dut.mem_write_en)
+      $display("***************WRITING TO MEMORY***************");
+
+     $display("");
+
+     // $display("scaled_write_addr: %d", dut.dm.scaled_write_addr);
+     // $display("scaled_read_addr: %d", dut.dm.scaled_read_addr);
+
+     $display("");
+     $display("Frame Pointer: %d", dut.r.data[11]);
+     $display("Stack Pointer: %d", dut.r.data[13]);
+     $display("");
+
+     $display("data_inst: %b", dut.data_inst);
      $display("branch_inst: %b", dut.branch_inst);
+     $display("load_inst: %b", dut.load_inst);
+     $display("store_inst: %b", dut.store_inst);
+     $display("");
+
+     // Display instruction type
+     if(dut.branch_inst) begin $display("PC: %d %s B", dut.pc_curr/4, condition);  $display("Offset: %d", dut.u.extended_offset); end
+     else if(dut.data_inst) $display("PC: %d %s %s" , dut.pc_curr/4, condition, opcode);
+     else if(dut.load_inst)$display("PC: %d %s LDR" , dut.pc_curr/4, condition);
+     else if(dut.store_inst)$display("PC: %d %s STR" , dut.pc_curr/4, condition);
+     else $display("PC: %d %s Unknown", dut.pc_curr/4, condition);
+     $display("Next PC: %d", dut.pc_next/4);
+
+     // Display alu outputs
+     $display("Alu Result: %d", dut.a.out);
+     $display("Flags: Z:%b N:%b C:%b V:%b", dut.Z_flag, dut.N_flag, dut.C_flag, dut.V_flag);
+
+     // Display branch information
+//     $display("scaled_addr: %b addr: %b inst: %b", dut.c.scaled_addr, dut.c.addr, dut.c.inst);
+//     $display("branch_inst: %b", dut.branch_inst);
      $display("conditional_execute: %b", dut.cond_execute);
+     $display("Result: %d", dut.r.data[0]);
+
+     // Print blank lines
+     $display("");
      $display("");
   end
 
@@ -90,12 +150,10 @@ always @(*) begin
   end
 
   initial begin
-  						                          @(posedge clk);
- 	  resetn <= 1;			               		@(posedge clk);
     resetn <= 0;			               		@(posedge clk);
     resetn <= 1;					              @(posedge clk);
 
-    for (i=0; i <= 50; i = i + 1) begin
+    for (i=0; i <= 100; i = i + 1) begin
 
 //   	 $display("%b",debug_port1);
 //       $display("%b",debug_port2);
@@ -106,7 +164,7 @@ always @(*) begin
 //       $display("%b",debug_port7);
        @(posedge clk);
       end
-      $stop;
+      $finish;
     end
 
 endmodule

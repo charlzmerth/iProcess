@@ -17,7 +17,7 @@ module update_pc(
   // Calculate the next PC based on branch condition
   always @ (*) begin
     if (branch_inst && cond_execute)
-      pc_out = pc_in + `PC_INCR + (extended_offset << `B_OFFSET_SHIFT);
+      pc_out = pc_in + (extended_offset << `B_OFFSET_SHIFT) + `PC_INCR;
     else
       pc_out = pc_in + `PC_INCR;
   end

@@ -3,8 +3,10 @@
 `define _arm_constants
 
 // Design Constants
+`define CODE_DATA "../testcode/experimental/add/addtestcall.hex"
 `define CODE_MEM_SIZE 1024
 `define DATA_MEM_SIZE 4096
+`define PC_REGISTER 15
 
 // Pipeline Stages
 `define STATE_FTCH 0
@@ -47,6 +49,7 @@
 `define RM_LSB 0
 
 // Branch Instruction Bits
+`define LINK_REGISTER 14
 `define B_CODE 3'b101
 `define B_LINK_BIT 24
 `define B_OFFSET_MSB 23
@@ -98,7 +101,14 @@
 
 // Load/Store Immediate Instruction Bits
 `define LS_IMM_CODE 3'b010
+`define LS_PRE_NOT_POST 24
+`define LS_ADD_NOT_SUB 23
+`define LS_WRITEBACK_BIT 21
 `define LS_IMM_LOAD_BIT 20
+`define LS_BASE_REG_MSB 19
+`define LS_BASE_REG_LSB 16
+`define LS_DEST_REG_MSB 15
+`define LS_DEST_REG_LSB 12
 `define LS_IMM_OFFSET_MSB 11
 `define LS_IMM_OFFSET_LSB 0
 

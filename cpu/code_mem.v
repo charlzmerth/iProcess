@@ -1,5 +1,3 @@
-`define BENCHMARK "./code.hex"
-
 // Code memory for 32-bit CPU, where SIZE is # of bytes
 module code_mem #(parameter SIZE=1024) (
     input wire clk, reset,
@@ -14,8 +12,8 @@ module code_mem #(parameter SIZE=1024) (
   reg [31:0] data [0:(SIZE/4)-1];
 
   initial begin
-    $readmemh(`BENCHMARK, data);
-    $display("Running Testbench on %s", `BENCHMARK);
+    $readmemh(`CODE_DATA, data);
+    $display("Running Testbench on %s", `CODE_DATA);
   end
 
   // Test if address is out of bounds
