@@ -51,7 +51,7 @@ module alu (
       `MOV: begin out = shifter_out; C_flag = shifter_carry; V_flag = V_flag; end
       `BIC: begin out = regA & (~shifter_out); C_flag = shifter_carry; V_flag = V_flag; end
       `MVN: begin out = ~(regA); C_flag = shifter_carry; V_flag = V_flag; end
-       default: begin out = 32'bx; C_flag = 1'bx; V_flag = 1'bx; end
+      default: begin out = 32'bx; C_flag = 1'bx;  V_flag = 1'bx; end
     endcase
   end
 endmodule
