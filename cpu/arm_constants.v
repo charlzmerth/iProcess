@@ -3,7 +3,7 @@
 `define _arm_constants
 
 // Design Constants
-`define CODE_DATA "../testcode/experimental/add/addtestcall.hex"
+`define CODE_DATA "/home/merthc/Documents/iProcess/testcode/experimental/add/addtestcall.hex"
 `define CODE_MEM_SIZE 1024
 `define DATA_MEM_SIZE 4096
 `define PC_REGISTER 15

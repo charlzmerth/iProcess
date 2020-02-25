@@ -88,37 +88,39 @@ always @(*) begin
      $display("Writeback Instruction: %h", dut.wrbk_inst);
      $display("");
 
-     $display("reg_write_value: %d reg_writeback: %b write_en: %d", dut.reg_write_value, dut.reg_writeback, dut.reg_write_en);
      $display("RegA: %d | RegB: %d | WReg: %d", dut.read_regA, dut.read_regB, dut.write_reg);
-     $display("RegA data: %d RegB data: %d", dut.data_regA, dut.data_regB);
+     $display("RegA Read Data: %d | RegB Read Data: %d", dut.data_regA, dut.data_regB);
+     $display("Register Write Data: %d", dut.reg_write_value);
      $display("");
 
      $display("Memory Access: %d", dut.mem_access_addr);
-     $display("Memory Write Data: %d", dut.data_regB);
      $display("Memory Read Data: %d", dut.read_mem_data);
+     $display("Memory Write Data: %d", dut.data_regB);
      //$display("offset: %d | add_not_sub: %b", dut.ls_imm_offset, dut.add_not_sub);
      $display("");
 
-     if (dut.reg_write_en)
+     if (dut.reg_write_en) begin
       $display("***************WRITING TO REGISERS***************");
+      $display("");
+     end
 
-     if (dut.mem_write_en)
+     if (dut.mem_write_en) begin
       $display("***************WRITING TO MEMORY***************");
+      $display("");
+     end
 
-     $display("");
 
      // $display("scaled_write_addr: %d", dut.dm.scaled_write_addr);
      // $display("scaled_read_addr: %d", dut.dm.scaled_read_addr);
 
-     $display("");
      $display("Frame Pointer: %d", dut.r.data[11]);
      $display("Stack Pointer: %d", dut.r.data[13]);
      $display("");
 
-     $display("data_inst: %b", dut.data_inst);
-     $display("branch_inst: %b", dut.branch_inst);
-     $display("load_inst: %b", dut.load_inst);
-     $display("store_inst: %b", dut.store_inst);
+     $display("data: %b", dut.data_inst);
+     $display("branch: %b", dut.branch_inst);
+     $display("load: %b", dut.load_inst);
+     $display("store: %b", dut.store_inst);
      $display("");
 
      // Display instruction type
@@ -153,7 +155,7 @@ always @(*) begin
     resetn <= 0;			               		@(posedge clk);
     resetn <= 1;					              @(posedge clk);
 
-    for (i=0; i <= 100; i = i + 1) begin
+    for (i=0; i <= 150; i = i + 1) begin
 
 //   	 $display("%b",debug_port1);
 //       $display("%b",debug_port2);

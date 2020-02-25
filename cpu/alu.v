@@ -30,29 +30,28 @@ module alu (
   always @(*) begin
     N_flag = out[31];
     Z_flag = (out == 0);
-    V_flag = (regA[31] ^ shifter_out[31]) == out[31];
   end
 
   // Perform designated arithmetic operation
   always @(*) begin
     case (opcode)
-      `AND: begin out = regA & shifter_out; C_flag = shifter_carry; end
-      `EOR: begin out = regA ^ shifter_out; C_flag = shifter_carry; end
-      `SUB: begin out = regA + (~shifter_out + 1); C_flag = ~(regA < shifter_out); end
-      `RSB: begin out = shifter_out + (~regA + 1); C_flag = ~(regA > shifter_out); end
-      `ADD: begin {C_flag, out} = regA + shifter_out; end
-      `ADC: begin {C_flag, out} = regA + shifter_out + C_flag; end
-      `SBC: begin out = regA + (~shifter_out + 1) + (~{31'b0,~C_flag} + 1); C_flag = ~(regA < shifter_out); end
-      `RSC: begin out = shifter_out + (~regA + 1) + (~{31'b0,~C_flag} + 1); C_flag = ~( regA < (~C_flag + shifter_out)); end
-      `TST: begin out = regA & shifter_out; C_flag = shifter_carry; end
-      `TEQ: begin out = regA ^ shifter_out; C_flag = shifter_carry; end
-      `CMP: begin out = regA + (~shifter_out + 1); C_flag = ~(regA < shifter_out); end
-      `CMN: begin {C_flag, out} = regA + shifter_out; end
-      `ORR: begin out = regA | shifter_out; C_flag = shifter_carry; end
-      `MOV: begin out = shifter_out; C_flag = shifter_carry; end
-      `BIC: begin out = regA & (~shifter_out); C_flag = shifter_carry; end
-      `MVN: begin out = ~(regA); C_flag = shifter_carry; end
-       default: begin out = 32'bx; C_flag = 1'bx; end
+      `AND: begin out = regA & shifter_out; C_flag = shifter_carry; V_flag = V_flag; end
+      `EOR: begin out = regA ^ shifter_out; C_flag = shifter_carry; V_flag = V_flag; end
+      `SUB: begin out = regA + (~shifter_out + 1); C_flag = ~(regA < shifter_out);  V_flag = (regA[31] == ~(shifter_out[31])) & ( regA[31] != out[31]); end
+      `RSB: begin out = shifter_out + (~regA + 1); C_flag = ~(regA > shifter_out); V_flag = (~(regA[31]) == shifter_out[31]) & ( shifter_out[31] != out[31]); end
+      `ADD: begin {C_flag, out} = regA + shifter_out; V_flag = (regA[31] == shifter_out[31]) & ( regA[31] != out[31]); end
+      `ADC: begin {C_flag, out} = regA + shifter_out + C_flag; V_flag = (regA[31] == shifter_out[31]) & ( regA[31] != out[31]); end
+      `SBC: begin out = regA + (~shifter_out + 1) + (~{31'b0,~C_flag} + 1); C_flag = ~(regA < shifter_out);  V_flag = (regA[31] == ~(shifter_out[31])) & ( regA[31] != out[31]); end
+      `RSC: begin out = shifter_out + (~regA + 1) + (~{31'b0,~C_flag} + 1); C_flag = ~( regA < (~C_flag + shifter_out)); V_flag = (~(regA[31]) == shifter_out[31]) & ( shifter_out[31] != out[31]); end
+      `TST: begin out = regA & shifter_out; C_flag = shifter_carry; V_flag = V_flag; end
+      `TEQ: begin out = regA ^ shifter_out; C_flag = shifter_carry; V_flag = V_flag; end
+      `CMP: begin out = regA + (~shifter_out + 1); C_flag = ~(regA < shifter_out);  V_flag = (regA[31] == ~(shifter_out[31])) & ( regA[31] != out[31]); end
+      `CMN: begin {C_flag, out} = regA + shifter_out; V_flag = (regA[31] == shifter_out[31]) & ( regA[31] != out[31]); end
+      `ORR: begin out = regA | shifter_out; C_flag = shifter_carry;  V_flag = V_flag; end
+      `MOV: begin out = shifter_out; C_flag = shifter_carry; V_flag = V_flag; end
+      `BIC: begin out = regA & (~shifter_out); C_flag = shifter_carry; V_flag = V_flag; end
+      `MVN: begin out = ~(regA); C_flag = shifter_carry; V_flag = V_flag; end
+       default: begin out = 32'bx; C_flag = 1'bx; V_flag = 1'bx; end
     endcase
   end
 endmodule
