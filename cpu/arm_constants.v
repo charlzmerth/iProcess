@@ -33,6 +33,12 @@
 `define COND_AL 4'b1110
 `define COND_NV 4'b1111
 
+// Instruction Types
+`define DATA_INST 3'b001
+`define LOAD_INST 3'b001
+`define STORE_INST 3'b001
+`define BRANCH_INST 3'b001
+
 // Global Instruction Constants
 `define PC_INCR 4
 `define COND_MSB 31
