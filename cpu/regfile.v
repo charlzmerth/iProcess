@@ -18,7 +18,7 @@ module regfile (
 
   always @(posedge clk) begin
     if (reset) begin
-  	  for (i = 0; i < 16; i++) begin
+  	  for (i = 0; i < 16; i=i+1) begin
         data[i] <= 0;
       end
     end

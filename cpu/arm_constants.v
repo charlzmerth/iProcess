@@ -3,17 +3,19 @@
 `define _arm_constants
 
 // Design Constants
-`define CODE_DATA "/home/merthc/Documents/iProcess/testcode/experimental/add/addtestcall.hex"
+`define CODE_DATA "C:\\Users\\merthc\\Desktop\\iProcess\\testcode\\experimental\\add\\addtestcall.hex"
 `define CODE_MEM_SIZE 1024
 `define DATA_MEM_SIZE 4096
 `define PC_REGISTER 15
 
-// Pipeline Stages
-`define STATE_FTCH 0
-`define STATE_DECD 1
-`define STATE_EXEC 2
-`define STATE_MEMW 3
-`define STATE_WRBK 4
+// Pipeline Vectors
+`define CTRL_VECTOR_SIZE 15:0
+`define INST_TYPE 15:14
+`define READ_REGA 13:10
+`define READ_REGB 9:6
+`define WRITE_REG 5:2
+`define REG_WR_EN 1:1
+`define COND_VALID 0:0
 
 // Condition Codes
 `define COND_EQ 4'b0000
@@ -34,10 +36,10 @@
 `define COND_NV 4'b1111
 
 // Instruction Types
-`define DATA_INST 3'b001
-`define LOAD_INST 3'b001
-`define STORE_INST 3'b001
-`define BRANCH_INST 3'b001
+`define DATA_INST 3'b00
+`define LOAD_INST 3'b01
+`define STORE_INST 3'b10
+`define BRANCH_INST 3'b11
 
 // Global Instruction Constants
 `define PC_INCR 4

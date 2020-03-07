@@ -1,4 +1,6 @@
 // Code memory for 32-bit CPU, where SIZE is # of bytes
+`include "arm_constants.v"
+
 module code_mem #(parameter SIZE=1024) (
     input wire clk, reset,
     input wire [31:0] addr,

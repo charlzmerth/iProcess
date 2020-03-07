@@ -24,7 +24,7 @@ module data_mem #(parameter SIZE=4096) (
     if (reset) begin
       read_data <= 31'bx;
 
-      for (i = 0; i < SIZE/4; i++)
+      for (i = 0; i < SIZE/4; i=i+1)
         data[i] <= 0;
     end
     else begin

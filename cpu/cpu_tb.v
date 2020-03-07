@@ -1,5 +1,5 @@
 // Test bench for cpu
-`timescale 1ns/10ps
+`timescale 1ns/1ns
 `include "arm_constants.v"
 
 module cpu_tb();
@@ -70,6 +70,7 @@ always @(*) begin
   endcase
   end
 
+/*
   always @(posedge clk) begin
      if (dut.cycle_state == `STATE_FTCH) begin
       $display("");
@@ -145,6 +146,7 @@ always @(*) begin
      $display("");
      $display("");
   end
+*/
 
   initial begin // Set up the clock
     clk <= 0;

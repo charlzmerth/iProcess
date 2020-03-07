@@ -1,4 +1,6 @@
 // Calculates the next PC, factoring in branches
+`include "arm_constants.v"
+
 module update_pc(
     input wire branch_inst, cond_execute,
     input wire [31:0] pc_in,
