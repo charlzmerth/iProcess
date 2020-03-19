@@ -2,11 +2,15 @@
 `include "arm_constants.v"
 
 module update_pc(
-    input wire branch_inst, cond_execute,
+    input wire [`CTRL_VECTOR_SIZE] ctrl,
+    input wire stall,
     input wire [31:0] pc_in,
     input wire [31:0] inst,
     output reg [31:0] pc_out
   );
+
+  wire branch_inst = ctrl[`INST_TYPE] == `BRANCH_INST;
+  wire cond_execute = ctrl[`EXEC_THIS];
 
   // Branch Specific Calculations
   wire [23:0] offset_field;
@@ -18,8 +22,10 @@ module update_pc(
 
   // Calculate the next PC based on branch condition
   always @ (*) begin
-    if (branch_inst && cond_execute)
-      pc_out = pc_in + (extended_offset << `B_OFFSET_SHIFT) + `PC_INCR;
+    if (stall)
+      pc_out = pc_in;
+    else if (branch_inst && cond_execute)
+      pc_out = pc_in + (extended_offset << `B_OFFSET_SHIFT); // + `PC_INCR;
     else
       pc_out = pc_in + `PC_INCR;
   end

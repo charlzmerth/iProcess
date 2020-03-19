@@ -1,6 +1,15 @@
 TODO:
 
+-LDR data hazard stall
+-BL data hazard (next)
+
+-pre/post index writeback ()
+
+-clean controlpath/datapath messiness (ex: ctrl[`WRITE_REG_EN])
+
 -for PC: check for writes to PC (r15), route to PC local variable
+
+
 
 Testing:
   1. write assembly by hand
@@ -12,8 +21,9 @@ Testing:
 NEVER SYNTHESIZE a latch
   - check in synthesis log
 
-Implement Load/Store Instructions
-  - pre/post base register indexing?
-  - how to test?
-
 Fix/Debug ALU (especially conditions codes)
+
+BUG:
+- forwarding data that doesn't pass condition
+- memory latency hazard (i.e., write, then immediate read) (fixed???)
+- branch to pc == 0 causes forced non-noop

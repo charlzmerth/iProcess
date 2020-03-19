@@ -17,17 +17,10 @@ module regfile (
   integer i;
 
   always @(posedge clk) begin
-    if (reset) begin
-  	  for (i = 0; i < 16; i=i+1) begin
-        data[i] <= 0;
-      end
-    end
-  	else begin
-  	  data_regA <= data[read_regA];
-  	  data_regB <= data[read_regB];
+    if (write_en)
+      data[write_reg] = write_data;
 
-  	  if (write_en)
-        data[write_reg] <= write_data;
-	  end
+	  data_regA <= data[read_regA];
+	  data_regB <= data[read_regB];
   end
 endmodule

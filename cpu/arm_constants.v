@@ -3,19 +3,21 @@
 `define _arm_constants
 
 // Design Constants
-`define CODE_DATA "C:\\Users\\merthc\\Desktop\\iProcess\\testcode\\experimental\\add\\addtestcall.hex"
+`define CODE_DATA "C:\\Users\\merthc\\Documents\\iProcess\\testcode\\experimental\\main\\addtesttwo.hex"
 `define CODE_MEM_SIZE 1024
 `define DATA_MEM_SIZE 4096
 `define PC_REGISTER 15
+`define CTRL_NOOP ({15'bx, 1'b0})
 
 // Pipeline Vectors
-`define CTRL_VECTOR_SIZE 15:0
+`define CTRL_VECTOR_SIZE 16:0
+`define MEM_WR_EN 16:16
 `define INST_TYPE 15:14
 `define READ_REGA 13:10
 `define READ_REGB 9:6
 `define WRITE_REG 5:2
 `define REG_WR_EN 1:1
-`define COND_VALID 0:0
+`define EXEC_THIS 0:0
 
 // Condition Codes
 `define COND_EQ 4'b0000

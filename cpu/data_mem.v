@@ -21,17 +21,9 @@ module data_mem #(parameter SIZE=4096) (
 
   integer i;
   always @(posedge clk) begin
-    if (reset) begin
-      read_data <= 31'bx;
+    read_data <= data[scaled_read_addr];
 
-      for (i = 0; i < SIZE/4; i=i+1)
-        data[i] <= 0;
-    end
-    else begin
-      read_data <= data[scaled_read_addr];
-
-      if (write_en)
-        data[scaled_write_addr] <= write_data;
-    end
+    if (write_en)
+      data[scaled_write_addr] <= write_data;
   end
 endmodule
