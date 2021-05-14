@@ -24,7 +24,7 @@ This is a 5-Stage Pipelined ARM 32-bit Processor written in Verilog. The overall
 
 **Figure 1: A list of files in our CPU design.**
 
-![](media/image5.png)
+![](media/image7.png)
 
 **Figure 2: Structural block design of our CPU (via Quartus Prime RTL Viewer).**
 
@@ -41,7 +41,7 @@ memw\_xxx: Register writeback stage
 
 This keeps all of the signals well organized. We achieved pipelining simply by using registers and passing sequential instructions (as well as some pertinent control signals) at each clock cycle. Figure 3 shows instruction pipelining in our top-level module.
 
-![](media/image4.png)
+![](media/image2.png)
 
 **Figure 3: Instruction pipelining logic in cpu.v module.**
 
@@ -73,7 +73,7 @@ add r2, r0, r1
 
 The key issue here is that data is “requested” two cycles before the updated value is written to memory. We fixed this by including **register forwarding** logic to detect this contingency.
 
-![](media/image7.png)
+![](media/image10.png)
 
 **Figure 5: Implementation of Register Forwarding.**
 
@@ -106,7 +106,7 @@ str r3, [r11]
 
 Here, the store instruction wants to write to the address stored at r11, but that data is changed after the register file reads r11. Therefore we implemented another buffer that checks for these types of hazards (shown below).
 
-![](media/image3.png)
+![](media/image5.png)
 
 **Figure 8: Logic for preventing accesses to erroneous memory addresses.**
 
@@ -126,7 +126,7 @@ orr r7, r0, r8 @ Fixed by register file bypass
 
 In this case, the load instruction writes the memory data in the “writeback” stage, while the subtract instruction needs the data in its “execute” stage. This is equivalent to a three-cycle timing mismatch. This data hazard requires a **pipeline stall**, as there is no other way for the subtract instruction to receive the most recent data.
 
-![](media/image6.png)
+![](media/image3.png)
 
 **Figure 10: Logic in datapath.v for detecting “data read after load”.**
 
@@ -139,8 +139,8 @@ To test our CPU, we wrote programs in C, then compiled them into assembly using 
 
 We first tested a simple program written in C that initializes several variables and adds them together, storing the result in another variable. The code is shown in Figure 11.
 
-![](media/image2.png)
-![](media/image10.png)
+![](media/image8.png)
+![](media/image6.png)
 
 **Figure 11: Test file add.c and gcc’s ARM32 assembly output.**!
 
@@ -160,13 +160,13 @@ Hardware
 
 In order to monitor how the program executes on our device, we mapped certain signals to external debug ports. Figure 13 shows the signals that are distributed across all 7 of them.
 
-![](media/image1.png)
+![](media/image4.png)
 
 **Figure 13: Debug port definitions in top-level module.**
 
 Finally, after synthesizing the logic onto our FPGA, we monitored output using debug\_console.py. I wrote a simple Python script to change the output from hexadecimal into decimal representation. The relevant section of results as in Figure 12 are shown below.
 
-![](media/image8.png)
+![](media/image1.png)
 
 **Figure 14: Results of uploading add.c to the TinyFPGA BX.**
 
